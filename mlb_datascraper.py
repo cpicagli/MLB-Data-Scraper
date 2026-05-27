@@ -16,13 +16,15 @@ def get_daily_mlb_matchups():
         return
 
     data = response.json()
-    dates = data.get("dates", [])
+    dates_list = data.get("dates", [])
 
-    if not dates:
+    # Failsafe if no games are scheduled
+    if not dates_list or not isinstance(dates_list, list):
         print("No games scheduled for today.")
         return
 
-    games = dates[0].get("games", [])
+    # Extract games out of the first item in the dates list
+    games = dates_list[0].get("games", [])
     print(f"Found {len(games)} scheduled games.\n")
 
     # 3. Loop through each game to extract matchup details
