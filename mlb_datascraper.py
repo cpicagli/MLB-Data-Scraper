@@ -62,16 +62,16 @@ def get_daily_mlb_matchups():
         home_pitcher_hand = get_pitcher_hand(home_pitcher_data.get("id"))
 
         # Print clean, scannable overview
-        print(f"🏟️  Matchup: {away_team} @ {home_team}")
-        print(f"📍 Location: {venue}")
+        print(f" Matchup: {away_team} @ {home_team}")
+        print(f" Location: {venue}")
         print(
-            f"🪓 Away Pitcher: {away_pitcher} ({away_pitcher_hand}-Handed)"
+            f" Away Pitcher: {away_pitcher} ({away_pitcher_hand}-Handed)"
         )
         print(
-            f"🏠 Home Pitcher: {home_pitcher} ({home_pitcher_hand}-Handed)"
+            f" Home Pitcher: {home_pitcher} ({home_pitcher_hand}-Handed)"
         )
         print(
-            f"🔗 Live Data Link: https://mlb.com{game_id}"
+            f" Live Data Link: https://mlb.com{game_id}"
         )
         print("-" * 50)
 
