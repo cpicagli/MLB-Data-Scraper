@@ -18,27 +18,41 @@ def get_daily_mlb_matchups():
     data = response.json()
     dates_list = data.get("dates", [])
 
-    # Failsafe if no games are scheduled
+    # Failsafe if no games are scheduled at all today
     if not dates_list or not isinstance(dates_list, list):
-        print("No games scheduled for today.")
+        print("ℹ️ No games scheduled for today.")
         return
 
-    # Extract games out of the first item in the dates list
+    # CORRECT FIX: Access the first index [0] of the list to get games
     games = dates_list[0].get("games", [])
-    print(f"Found {len(games)} scheduled games.\n")
+
+    if not games:
+        print("ℹ️ No games scheduled for today.")
+        return
+
+    print(f"✅ Found {len(games)} scheduled games.\n")
 
     # 3. Loop through each game to extract matchup details
     for game in games:
         game_id = game.get("gamePk")
         venue = game.get("venue", {}).get("name", "Unknown Stadium")
 
-        # Team names
-        away_team = game["teams"]["away"]["team"]["name"]
-        home_team = game["teams"]["home"]["team"]["name"]
+        # Extract team data safely
+        teams_data = game.get("teams", {})
+        away_team = (
+            teams_data.get("away", {}).get("team", {}).get("name", "Away Team")
+        )
+        home_team = (
+            teams_data.get("home", {}).get("team", {}).get("name", "Home Team")
+        )
 
         # Extract probable pitchers safely
-        away_pitcher_data = game["teams"]["away"].get("probablePitcher", {})
-        home_pitcher_data = game["teams"]["home"].get("probablePitcher", {})
+        away_pitcher_data = teams_data.get("away", {}).get(
+            "probablePitcher", {}
+        )
+        home_pitcher_data = teams_data.get("home", {}).get(
+            "probablePitcher", {}
+        )
 
         away_pitcher = away_pitcher_data.get("fullName", "TBD")
         home_pitcher = home_pitcher_data.get("fullName", "TBD")
@@ -70,7 +84,7 @@ def get_pitcher_hand(player_id):
     player_url = f"https://mlb.com{player_id}"
     try:
         res = requests.get(player_url).json()
-        hand = res["people"][0].get("pitchHand", {}).get("code", "U")
+        hand = res["people"].get("pitchHand", {}).get("code", "U")
         return "Left" if hand == "L" else "Right"
     except Exception:
         return "Unknown"
